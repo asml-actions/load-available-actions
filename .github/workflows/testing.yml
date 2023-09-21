@@ -29,7 +29,7 @@ jobs:
         name: Load available actions
         with: 
           PAT: ${{ secrets.PAT }} 
-          user: ${{ env.user }}
+          organization: asml-actions
         id: load-actions 
 
       # check if the result file is not empty
