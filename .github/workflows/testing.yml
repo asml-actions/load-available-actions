@@ -22,8 +22,7 @@ jobs:
       # make sure we have a new build, in case the dist folder was not updated
       - name: Compile with NPM
         run: | 
-          npm ci
-          npm run all
+          yarn install
 
       # run the test
       - uses: ./
