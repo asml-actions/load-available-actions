@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import {execSync} from 'child_process'
 import moment from 'moment'
 import string from 'string-sanitizer'
+import {encode} from 'html-entities';
 import YAML from 'yaml'
 import {promisify} from 'util'
 import fs from 'fs'
@@ -22,12 +23,12 @@ export function parseYAML(
 
   try {
     const parsed = YAML.parse(content)
-    name = removeGreaterLessThan(parsed.name) || defaultValue
-    author = removeGreaterLessThan(parsed.author) || defaultValue
-    description = removeGreaterLessThan(parsed.description) ||  defaultValue
+    name = encode(parsed.name) || defaultValue
+    author = encode(parsed.author) || defaultValue
+    description = encode(parsed.description) ||  defaultValue
 
     if (parsed.runs) {
-      using = parsed.runs.using ? sanitize(parsed.runs.using) : defaultValue
+      using = parsed.runs.using ? encode(parsed.runs.using) : defaultValue
     }
   } catch (error) {
     // this happens in https://github.com/gaurav-nelson/github-action-markdown-link-check/blob/9de9db77de3b29b650d2e2e99f0ee290f435214b/action.yml#L9
@@ -43,7 +44,7 @@ export function parseYAML(
   }
   return {name, author, description, using}
 }
-const removeGreaterLessThan = (item:string) => item.replace(/\>/g,'&#62;').replace(/\</g,'&#60;')
+
 
 export function sanitize(value: string) {
   return string.sanitize.keepSpace(value)
