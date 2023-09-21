@@ -36,7 +36,7 @@ test(`check html encode funciton`, () => {
   const filePath = 'test'
   const result = parseYAML(filePath, 'test', content)
 
-  expect(result.name).toBe('&lt;test script=&quot;injection&quot;&gt;')
+  expect(result.name).toBe('&lt;test script&equals;&quot;injection&quot;&gt;')
   expect(result.author).toBe('&lt;injection test in author&gt;')
   expect(result.description).toBe(
     `injection test in description ( &lt; &gt; &quot; &amp;`
