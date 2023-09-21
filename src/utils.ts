@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import {execSync} from 'child_process'
 import moment from 'moment'
-import string from 'string-sanitizer'
 import {encode} from 'html-entities';
 import YAML from 'yaml'
 import {promisify} from 'util'
@@ -23,12 +22,12 @@ export function parseYAML(
 
   try {
     const parsed = YAML.parse(content)
-    name = encode(parsed.name) || defaultValue
-    author = encode(parsed.author) || defaultValue
-    description = encode(parsed.description) ||  defaultValue
+    name = encode(parsed.name,{mode:'extensive'}) || defaultValue
+    author = encode(parsed.author),{mode:'extensive'} || defaultValue
+    description = encode(parsed.description),{mode:'extensive'} ||  defaultValue
 
     if (parsed.runs) {
-      using = parsed.runs.using ? encode(parsed.runs.using) : defaultValue
+      using = parsed.runs.using ? encode(parsed.runs.using,{mode:'extensive'}) : defaultValue
     }
   } catch (error) {
     // this happens in https://github.com/gaurav-nelson/github-action-markdown-link-check/blob/9de9db77de3b29b650d2e2e99f0ee290f435214b/action.yml#L9
@@ -45,10 +44,6 @@ export function parseYAML(
   return {name, author, description, using}
 }
 
-
-export function sanitize(value: string) {
-  return string.sanitize.keepSpace(value)
-}
 
 // Interface for a Dockerfile with actionable properties
 export interface DockerActionFiles {
