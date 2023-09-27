@@ -19,7 +19,7 @@ import YAML from 'yaml'
 
 dotenv.config()
 
-const getInputOrEnv = (input: string) =>
+const getInputOrEnv = (input: string): string =>
   core.getInput(input) || process.env[input] || ''
 //Optional values
 const removeTokenSetting = getInputOrEnv('removeToken')
@@ -40,7 +40,7 @@ async function run(): Promise<void> {
 
     if (!PAT) {
       core.setFailed(
-        "Parameter 'PAT' is required to load all actions from the organization or user account"
+        `Parameter 'PAT' is required to load all actions from the organization or user account`
       )
       return
     }
@@ -108,7 +108,7 @@ async function run(): Promise<void> {
     core.info(`Writing results to [${fullPath}]`)
 
     core.setOutput('actions-file-path', fullPath)
-  } catch (error: any) {
+  } catch (error) {
     core.setFailed(`Error running action: : ${error.message}`)
   }
 }
@@ -196,7 +196,7 @@ const getSearchResult = async (
   organization: string,
   isEnterpriseServer: boolean,
   searchQuery: string
-) => {
+): Promise<string[]> => {
   if (username) {
     core.info(
       `Search for action files of the user [${username}] in forked repos`
@@ -231,7 +231,7 @@ async function checkRateLimits(
   client: Octokit,
   isEnterpriseServer: boolean,
   limitToSearch = false
-) {
+): Promise<void> {
   // ratelimiting can be enabled on GHES as well, but is off by default
   // we load it from an api call and see if it is enabled, wrapped with try .. catch to handle the error
   let ratelimit
@@ -375,8 +375,7 @@ async function getActionableDockerFiles(
       dockerActions = actionableDockerFiles
     }
   }
-
-  dockerActions?.forEach((value, index) => {
+  for (const [index, value] of dockerActions.entries()) {
     actions[index] = new ActionContent()
     actions[index].name = value.name
     actions[index].repo = value.repo
@@ -385,7 +384,8 @@ async function getActionableDockerFiles(
     actions[index].author = value.author
     actions[index].description = value.description
     actions[index].using = 'docker'
-  })
+  }
+
   return actions
 }
 
@@ -435,13 +435,17 @@ async function getAllActionsFromForkedRepos(
       }] action in repo [${repoName}] that was cloned to [${repoPath}]`
     )
 
-    for (let index = 0; index < actionFiles.length - 1; index++) {
+    for (
+      let actionIndex = 0;
+      actionIndex < actionFiles.length - 1;
+      actionIndex++
+    ) {
       core.debug(
-        `Found action file [${actionFiles[index]}] in repo [${repoName}]`
+        `Found action file [${actionFiles[actionIndex]}] in repo [${repoName}]`
       )
 
       // remove the actions/$repopath
-      const actionFile = actionFiles[index].substring(
+      const actionFile = actionFiles[actionIndex].substring(
         `actions/${repoName}/`.length
       )
       core.debug(`Found action file [${actionFile}] in repo [${repoName}]`)
@@ -485,7 +489,7 @@ function cloneRepo(repo: string, owner: string): string {
     })
 
     return path.join(repoPath, repo)
-  } catch (error: any) {
+  } catch (error) {
     core.info(`Error cloning repo [${repo}]: ${error}`)
     // core.info(`Message: ${error?.stdout.toString()}`) // stdout is null
     return ''
@@ -496,7 +500,7 @@ async function executeCodeSearch(
   client: Octokit,
   searchQuery: string,
   isEnterpriseServer: boolean
-): Promise<any> {
+): Promise<string[] | undefined> {
   try {
     core.debug(`searchQuery for code: [${searchQuery}]`)
 
@@ -516,12 +520,11 @@ async function executeCodeSearch(
       }`
     )
     if (
-      (error as Error).message.includes(
+      !(error as Error).message.includes(
         'SecondaryRateLimit detected for request'
       ) ||
-      (error as Error).message.includes('API rate limit exceeded for')
+      !(error as Error).message.includes('API rate limit exceeded for')
     ) {
-    } else {
       core.info(`Error executing code search: ${error}`)
       throw error
     }
@@ -590,10 +593,10 @@ async function paginateSearchQuery(
   searchQuery: string,
   isEnterpriseServer: boolean,
   searchRepos: boolean
-) {
+): Promise<string[]> {
   let page = 1
   let total_count = 0
-  let items: any[] = []
+  let items: string[] = []
   do {
     const response = await callSearchQueryWithBackoff(
       client,
@@ -700,7 +703,7 @@ async function getAllActionsUsingSearch(
     const repoName = searchResult[index].repository.name
     const repoOwner = searchResult[index].repository.owner.login
     // Push file to action list if filename matches action.yaml or action.yml
-    if (fileName == 'action.yaml' || fileName == 'action.yml') {
+    if (fileName === 'action.yaml' || fileName === 'action.yml') {
       core.info(`Found action in ${repoName}/${filePath}`)
 
       // Get the Repository Details

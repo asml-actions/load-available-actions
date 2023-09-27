@@ -13,7 +13,7 @@ export function parseYAML(
   filePath: string,
   repo: string | undefined,
   content: string
-): any {
+): {name: string; author: string; description: string; using: string} {
   const defaultValue = 'Undefined' // Default value when json field is not defined
   let name = defaultValue
   let author = defaultValue
@@ -23,9 +23,9 @@ export function parseYAML(
   try {
     const parsed = YAML.parse(content)
     name = encode(parsed.name, {mode: 'extensive'}) || defaultValue
-    ;(author = encode(parsed.author)), {mode: 'extensive'} || defaultValue
-    ;(description = encode(parsed.description)),
-      {mode: 'extensive'} || defaultValue
+    author = encode(parsed.author, {mode: 'extensive'}) || defaultValue
+    description =
+      encode(parsed.description, {mode: 'extensive'}) || defaultValue
 
     if (parsed.runs) {
       using = parsed.runs.using
