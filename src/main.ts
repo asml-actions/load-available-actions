@@ -631,7 +631,7 @@ async function executeRepoSearch(
   client: Octokit,
   searchQuery: string,
   isEnterpriseServer: boolean
-): Promise<any> {
+): Promise<string[]> {
   try {
     core.debug(`searchQuery for repos: [${searchQuery}]`)
     const searchResult = await paginateSearchQuery(
@@ -670,7 +670,7 @@ async function getRepoDetails(
   client: Octokit,
   owner: string,
   repo: string
-): Promise<any> {
+): Promise<unknown> {
   const {data: repoDetails} = await client.rest.repos.get({
     owner,
     repo

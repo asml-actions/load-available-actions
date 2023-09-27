@@ -61,7 +61,9 @@ export interface DockerActionFiles {
   // Icon and color is needed for using dockerfiles as actions, but it's not used in the marketplace.
 }
 
-export const getActionableDockerFilesFromDisk = async (path: string) => {
+export const getActionableDockerFilesFromDisk = async (
+  path: string
+): Promise<string[]> => {
   const dockerFilesWithActionArray: DockerActionFiles[] = []
   const dockerFiles = execSync(
     `find ${path} -name "Dockerfile" -o -name "dockerfile"`,
@@ -89,13 +91,13 @@ export const getActionableDockerFilesFromDisk = async (path: string) => {
             // Extract the actionable properties from the Dockerfile
             const splitText = data.split('\n')
             const dockerActionFile: DockerActionFiles = {}
-            splitText.forEach((line: string) => {
+            for (const line of splitText) {
               if (line.startsWith('LABEL com.github.actions.')) {
                 const type = line.split('.')[3].split('=')[0]
                 const data = line.split('"')[1]
                 dockerActionFile[type] = data
               }
-            })
+            }
 
             core.info(`Pushing: ${JSON.stringify(dockerActionFile)}`)
             dockerFilesWithActionArray.push(dockerActionFile)
