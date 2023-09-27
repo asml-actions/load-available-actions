@@ -12,6 +12,8 @@ import {getReadmeContent} from './optionalActions'
 import {parseYAML} from './utils'
 import {execSync} from 'child_process'
 import {Buffer} from "buffer"
+import {encode} from 'html-entities';
+
 import YAML from 'yaml'
 
 dotenv.config()
@@ -635,9 +637,9 @@ async function getActionInfo(
 
   const result = new ActionContent()
   if ('name' in yaml && 'download_url' in yaml) {
-    result.name = yaml.name
-    result.repo = repo
-    result.forkedfrom = forkedFrom
+    result.name = encode(yaml.name,{mode:'extensive'})
+    result.repo = encode(repo,{mode:'extensive'})
+    result.forkedfrom = encode(forkedFrom,{mode:'extensive'})
     result.isArchived = isArchived
     if (yaml.download_url !== null) {
       result.downloadUrl = removeTokenSetting
