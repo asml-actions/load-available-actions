@@ -25,7 +25,7 @@ test(`check parseYAML with normal strings`, () => {
   expect(result.using).toBe('test')
 })
 
-test(`check html encode funciton`, () => {
+test(`check html encode function`, () => {
   const content = `
   name: '<test script="injection">'
   author: '<injection test in author>'
