@@ -21,7 +21,7 @@ test(`check parseYAML with normal strings`, () => {
 
   expect(result.name).toBe('test-name')
   expect(result.author).toBe('test-author')
-  expect(result.description).toBe('email@testing.com-+-')
+  expect(result.description).toBe('email&commat;testing&period;com-&plus;-')
   expect(result.using).toBe('test')
 })
 
@@ -39,7 +39,7 @@ test(`check html encode funciton`, () => {
   expect(result.name).toBe('&lt;test script&equals;&quot;injection&quot;&gt;')
   expect(result.author).toBe('&lt;injection test in author&gt;')
   expect(result.description).toBe(
-    `injection test in description ( &lt; &gt; &quot; &amp;`
+    `injection test in description &lpar; &lt; &gt; &quot; &amp;`
   )
   expect(result.using).toBe('testwithquote&quot;')
 })
