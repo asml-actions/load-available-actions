@@ -758,7 +758,7 @@ async function getActionInfo(
   const result = new ActionContent()
   if ('name' in yaml && 'download_url' in yaml) {
     result.name = encode(yaml.name, {mode: 'extensive'})
-    result.repo = encode(repo, {mode: 'extensive'})
+    result.repo = repo
     result.forkedfrom = encode(forkedFrom, {mode: 'extensive'})
     result.isArchived = isArchived
     if (yaml.download_url !== null) {
