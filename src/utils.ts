@@ -63,7 +63,7 @@ export interface DockerActionFiles {
 
 export const getActionableDockerFilesFromDisk = async (
   path: string
-): Promise<string[]> => {
+): Promise<DockerActionFiles[]> => {
   const dockerFilesWithActionArray: DockerActionFiles[] = []
   const dockerFiles = execSync(
     `find ${path} -name "Dockerfile" -o -name "dockerfile"`,
