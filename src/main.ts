@@ -10,7 +10,6 @@ import dotenv from 'dotenv'
 import fs from 'fs'
 import path from 'path'
 import {getReadmeContent} from './optionalActions'
-
 import {execSync} from 'child_process'
 import {Buffer} from 'buffer'
 import {encode} from 'html-entities'
@@ -54,7 +53,10 @@ async function run(): Promise<void> {
 
     const octokit = new Octokit({
       auth: PAT,
-      baseUrl
+      baseUrl,
+      request: {
+        fetch
+      }
     })
 
     try {

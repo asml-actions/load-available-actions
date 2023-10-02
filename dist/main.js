@@ -5512,12 +5512,12 @@ var require_lib3 = __commonJS({
       const dest = new URL$1(destination).protocol;
       return orig === dest;
     };
-    function fetch(url, opts) {
-      if (!fetch.Promise) {
+    function fetch2(url, opts) {
+      if (!fetch2.Promise) {
         throw new Error("native promise missing, set fetch.Promise to your favorite alternative");
       }
-      Body.Promise = fetch.Promise;
-      return new fetch.Promise(function(resolve, reject) {
+      Body.Promise = fetch2.Promise;
+      return new fetch2.Promise(function(resolve, reject) {
         const request = new Request(url, opts);
         const options = getNodeRequestOptions(request);
         const send = (options.protocol === "https:" ? https : http).request;
@@ -5590,7 +5590,7 @@ var require_lib3 = __commonJS({
         req.on("response", function(res) {
           clearTimeout(reqTimeout);
           const headers = createHeadersLenient(res.headers);
-          if (fetch.isRedirect(res.statusCode)) {
+          if (fetch2.isRedirect(res.statusCode)) {
             const location = headers.get("Location");
             let locationURL = null;
             try {
@@ -5652,7 +5652,7 @@ var require_lib3 = __commonJS({
                   requestOpts.body = void 0;
                   requestOpts.headers.delete("content-length");
                 }
-                resolve(fetch(new Request(locationURL, requestOpts)));
+                resolve(fetch2(new Request(locationURL, requestOpts)));
                 finalize();
                 return;
             }
@@ -5745,11 +5745,11 @@ var require_lib3 = __commonJS({
         stream.end();
       }
     }
-    fetch.isRedirect = function(code) {
+    fetch2.isRedirect = function(code) {
       return code === 301 || code === 302 || code === 303 || code === 307 || code === 308;
     };
-    fetch.Promise = global.Promise;
-    module2.exports = exports = fetch;
+    fetch2.Promise = global.Promise;
+    module2.exports = exports = fetch2;
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.default = exports;
     exports.Headers = Headers;
@@ -5961,9 +5961,9 @@ var require_dist_node5 = __commonJS({
       let headers = {};
       let status;
       let url;
-      const fetch = requestOptions.request && requestOptions.request.fetch || globalThis.fetch || /* istanbul ignore next */
+      const fetch2 = requestOptions.request && requestOptions.request.fetch || globalThis.fetch || /* istanbul ignore next */
       import_node_fetch.default;
-      return fetch(
+      return fetch2(
         requestOptions.url,
         Object.assign(
           {
@@ -31280,7 +31280,10 @@ async function run() {
     }
     const octokit = new import_octokit.Octokit({
       auth: PAT,
-      baseUrl
+      baseUrl,
+      request: {
+        fetch
+      }
     });
     try {
     } catch (error2) {
@@ -31764,7 +31767,7 @@ async function getActionInfo(client, owner, repo, path2, forkedFrom, isArchived 
   const result = new ActionContent();
   if ("name" in yaml && "download_url" in yaml) {
     result.name = (0, import_html_entities2.encode)(yaml.name, { mode: "extensive" });
-    result.repo = (0, import_html_entities2.encode)(repo, { mode: "extensive" });
+    result.repo = repo;
     result.forkedfrom = (0, import_html_entities2.encode)(forkedFrom, { mode: "extensive" });
     result.isArchived = isArchived;
     if (yaml.download_url !== null) {
