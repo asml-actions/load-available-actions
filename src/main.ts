@@ -53,10 +53,7 @@ async function run(): Promise<void> {
 
     const octokit = new Octokit({
       auth: PAT,
-      baseUrl,
-      request: {
-        fetch
-      }
+      baseUrl
     })
 
     try {
