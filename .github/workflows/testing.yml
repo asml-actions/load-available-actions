@@ -17,7 +17,8 @@ jobs:
       cancel-in-progress: false
     env:
       user: ${{ vars.USER }}
-    steps: 
+      
+    steps:
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
       # make sure we have a new build, in case the dist folder was not updated
       - name: Compile with NPM
