@@ -17,7 +17,7 @@ jobs:
     env:
       user: ${{ vars.USER }}
     steps: 
-      - uses: actions/setup-node@55832442197ac5d11caf9c5b0208c1d23d3a6c2d
+      - uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d
         with:
           node-version: '18' 
       - uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
