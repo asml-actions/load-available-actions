@@ -124,6 +124,7 @@ export class ActionContent extends ContentBase {
   author: string | undefined
   readme: string | undefined
   using: string | undefined
+  quality: number | undefined
 }
 
 export class WorkflowContent extends ContentBase {
@@ -185,8 +186,45 @@ async function enrichActionFiles(
       action.description = description
       action.using = using
     }
+
+    // check the action quality
+    action.quality = await checkActionQuality(action)
   }
   return actionFiles
+}
+
+/**
+ * Check the quality of the action by checking the name, author and description field
+ * Score is initially 5, For every issue lower the score by 1.
+ *
+ * @param action
+ * @returns
+ */
+async function checkActionQuality(action: ActionContent): Promise<number> {
+  let quality = 5
+
+  if (action.name === undefined || action.name === '') {
+    quality = quality - 1
+  }
+
+  if (
+    action.author === undefined ||
+    action.author === '' ||
+    action.author === 'Undefined'
+  ) {
+    quality = quality - 1
+  }
+
+  if (
+    action.description === undefined ||
+    action.description === '' ||
+    action.description === 'Undefined' ||
+    action.description.length < 20
+  ) {
+    quality = quality - 1
+  }
+
+  return quality
 }
 
 const getSearchResult = async (
@@ -223,7 +261,7 @@ const getSearchResult = async (
       isEnterpriseServer
     )
   }
-  return searchResult
+  return searchResult as string[]
 }
 
 async function checkRateLimits(
@@ -311,15 +349,16 @@ async function getAllNormalActions(
   actions = actions.concat(forkedActions)
   core.debug(`Found [${actions.length}] actions in total`)
 
+  // Disabled becaus it is removing almost 50% of the found actions, this has to be checked later
   // deduplicate the actions list
-  actions = actions.filter(
-    (action, index, self) =>
-      index ===
-      self.findIndex(
-        t => `${t.name} ${t.repo}` === `${action.name} ${action.repo}`
-      )
-  )
-  core.debug(`After dedupliation we have [${actions.length}] actions in total`)
+  // actions = actions.filter(
+  //   (action, index, self) =>
+  //     index ===
+  //     self.findIndex(
+  //       t => `${t.name} ${t.repo}` === `${action.name} ${action.repo}`
+  //     )
+  // )
+  // core.debug(`After dedupliation we have [${actions.length}] actions in total`)
   return actions
 }
 
@@ -383,6 +422,13 @@ async function getActionableDockerFiles(
     actions[index].author = value.author
     actions[index].description = value.description
     actions[index].using = 'docker'
+
+    // Quality Check
+    const action = new ActionContent()
+    action.name = value.name
+    action.author = value.author
+    action.description = value.description
+    actions[index].quality = await checkActionQuality(action)
   }
 
   return actions
