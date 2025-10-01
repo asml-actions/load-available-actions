@@ -35,7 +35,7 @@
     "@types/node": "^24.6.1",
     "@typescript-eslint/parser": "^8.38.0",
     "@vercel/ncc": "^0.38.4",
-    "ansi-regex": ">=6.1.0",
+    "ansi-regex": ">=6.2.2",
     "dotenv": "^17.2.1",
     "esbuild": "^0.25.10",
     "eslint": "^9.32.0",
