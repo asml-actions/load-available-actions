@@ -215,7 +215,7 @@ jobs:
       - test-load-from-organization
       - test-load-from-organization-with-forks
     steps:
-      - uses: actions/download-artifact@cc203385981b70ca67e1cc392babf9cc229d5806 # v4.1.9
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
         
       - run: |
           ls -la
